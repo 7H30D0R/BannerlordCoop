@@ -19,23 +19,35 @@ namespace GameInterface.Services.MobileParties.Data
         public AiBehavior Behavior { get; }
 
         [ProtoMember(3)]
-        public bool HasTarget { get; }
+        public AiBehavior DefaultBehavior { get; }
 
         [ProtoMember(4)]
-        public string TargetId { get; }
+        public bool HasTarget { get; }
 
         [ProtoMember(5)]
-        public float TargetPointX { get; }
+        public string TargetId { get; }
 
         [ProtoMember(6)]
+        public bool HasTargetSettlement { get; }
+
+        [ProtoMember(7)]
+        public string TargetSettlementId { get; }
+
+        [ProtoMember(8)]
+        public float TargetPointX { get; }
+
+        [ProtoMember(9)]
         public float TargetPointY { get; }
 
-        public PartyBehaviorUpdateData(string partyId, AiBehavior aiBehavior, bool hasTarget, string targetId, Vec2 targetPoint)
+        public PartyBehaviorUpdateData(string partyId, AiBehavior aiBehavior, AiBehavior defaultBehavior,  bool hasTarget, string targetId, bool hasTargetSettlement, string targetSettlementId, Vec2 targetPoint)
         {
             PartyId = partyId;
             Behavior = aiBehavior;
+            DefaultBehavior = defaultBehavior;
             HasTarget = hasTarget;
             TargetId = targetId;
+            HasTargetSettlement = hasTargetSettlement;
+            TargetSettlementId = targetSettlementId;
             TargetPointX = targetPoint.X;
             TargetPointY = targetPoint.Y;
         }

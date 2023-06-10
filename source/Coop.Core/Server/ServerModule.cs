@@ -3,6 +3,7 @@ using Common.LogicStates;
 using Common.Network;
 using Coop.Core.Common;
 using Coop.Core.Server.Connections;
+using Coop.Core.Server.Services.EntityScope;
 using Coop.Core.Server.Services.Save;
 using Coop.Core.Server.States;
 using LiteNetLib;
@@ -21,6 +22,8 @@ namespace Coop.Core.Server
             builder.RegisterType<InitialServerState>().As<IServerState>();
             builder.RegisterType<ClientRegistry>().As<IClientRegistry>().InstancePerLifetimeScope().AutoActivate();
             builder.RegisterType<CoopSaveManager>().As<ICoopSaveManager>().InstancePerLifetimeScope();
+            builder.RegisterType<ScopeRegistry>().As<IScopeRegistry>().InstancePerLifetimeScope().AutoActivate();
+            builder.RegisterType<ScopeNetwork>().As<IScopeNetwork>().InstancePerLifetimeScope();
 
             foreach (var handlerType in HandlerCollector.Collect<ServerModule>())
             {

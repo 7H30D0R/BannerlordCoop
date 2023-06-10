@@ -1,8 +1,10 @@
 ﻿using Common.Messaging;
 using Common.Network;
 using Coop.Core.Server.Connections.Messages;
+using Coop.Core.Server.Services.EntityScope;
 using GameInterface.Services.GameDebug.Messages;
 using GameInterface.Services.Heroes.Messages;
+using GameInterface.Services.Scope.Messages;
 using LiteNetLib;
 
 namespace Coop.Core.Server.Connections.States
@@ -10,12 +12,14 @@ namespace Coop.Core.Server.Connections.States
     public class ResolveCharacterState : ConnectionStateBase
     {
         private readonly IMessageBroker messageBroker;
+        private readonly IScopeRegistry scopeRegistry;
         private readonly INetwork network;
         public ResolveCharacterState(IConnectionLogic connectionLogic) 
             : base(connectionLogic)
         {
             messageBroker = connectionLogic.MessageBroker;
             network = connectionLogic.Network;
+            scopeRegistry = connectionLogic.ScopeRegistry;
 
             messageBroker.Subscribe<NetworkClientValidate>(ClientValidateHandler);
             messageBroker.Subscribe<HeroResolved>(ResolveHeroHandler);
@@ -41,6 +45,12 @@ namespace Coop.Core.Server.Connections.States
         {
             var validateMessage = new NetworkClientValidated(true, obj.What.HeroId);
             var playerPeer = ConnectionLogic.Peer;
+
+            messageBroker.Publish(this, new ClientSwitchedHero(
+                scopeRegistry.GetClientId(playerPeer),
+                obj.What.HeroId
+            ));
+
             ConnectionLogic.Network.Send(playerPeer, validateMessage);
             ConnectionLogic.TransferSave();
         }

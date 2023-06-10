@@ -1,6 +1,7 @@
 ﻿using Common.Messaging;
 using Common.Network;
 using Coop.Core.Client.Services.MobileParties.Messages;
+using Coop.Core.Server.Services.EntityScope;
 using Coop.Core.Server.Services.MobileParties.Messages;
 using GameInterface.Services.MobileParties.Messages.Behavior;
 
@@ -15,11 +16,13 @@ namespace Coop.Core.Server.Services.MobileParties.Handlers
     {
         private readonly IMessageBroker messageBroker;
         private readonly INetwork network;
+        private readonly IScopeNetwork scopeNetwork;
 
-        public MobilePartyBehaviorHandler(IMessageBroker messageBroker, INetwork network)
+        public MobilePartyBehaviorHandler(IMessageBroker messageBroker, INetwork network, IScopeNetwork scopeNetwork)
         {
             this.messageBroker = messageBroker;
             this.network = network;
+            this.scopeNetwork = scopeNetwork;
 
             messageBroker.Subscribe<NetworkRequestMobilePartyBehavior>(Handle);
             messageBroker.Subscribe<ControlledPartyBehaviorUpdated>(Handle);
@@ -43,7 +46,8 @@ namespace Coop.Core.Server.Services.MobileParties.Handlers
         {           
             var data = obj.What.BehaviorUpdateData;
 
-            network.SendAll(new NetworkUpdatePartyBehavior(data));
+            scopeNetwork.Broadcast(data.PartyId, new NetworkUpdatePartyBehavior(data));
+            //network.SendAll(new NetworkUpdatePartyBehavior(data));
 
             messageBroker.Publish(this, new UpdatePartyBehavior(data));
         }

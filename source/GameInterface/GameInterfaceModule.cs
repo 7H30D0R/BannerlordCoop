@@ -5,6 +5,7 @@ using GameInterface.Services.Entity;
 using GameInterface.Services.MobileParties;
 using GameInterface.Services.ObjectManager;
 using GameInterface.Services.Registry;
+using GameInterface.Services.Scope;
 
 namespace GameInterface;
 
@@ -29,5 +30,10 @@ public class GameInterfaceModule : Module
         builder.RegisterType<ControlledEntityRegistry>()
                .As<IControlledEntityRegistry>()
                .InstancePerLifetimeScope();
+
+        builder.RegisterType<ScopeManager>()
+               .As<IScopeManager>()
+               .InstancePerLifetimeScope()
+               .AutoActivate();
     }
 }

@@ -2,6 +2,7 @@
 using Common.Messaging;
 using Common.Network;
 using Coop.Core.Server.Connections.States;
+using Coop.Core.Server.Services.EntityScope;
 using LiteNetLib;
 using Serilog;
 
@@ -13,6 +14,7 @@ namespace Coop.Core.Server.Connections
         string HeroStringId { get; set; }
         IMessageBroker MessageBroker { get; }
         INetwork Network { get; }
+        IScopeRegistry ScopeRegistry { get; }
         IConnectionState State { get; set; }    
     }
 
@@ -25,6 +27,7 @@ namespace Coop.Core.Server.Connections
 
         public IMessageBroker MessageBroker { get; }
         public INetwork Network { get; }
+        public IScopeRegistry ScopeRegistry { get; }
 
         public IConnectionState State 
         {
@@ -39,11 +42,12 @@ namespace Coop.Core.Server.Connections
 
         private IConnectionState _state;
 
-        public ConnectionLogic(NetPeer playerId, IMessageBroker messageBroker, INetwork network)
+        public ConnectionLogic(NetPeer playerId, IMessageBroker messageBroker, INetwork network, IScopeRegistry scopeRegistry)
         {
             Peer = playerId;
             MessageBroker = messageBroker;
             Network = network;
+            ScopeRegistry = scopeRegistry;
             State = new ResolveCharacterState(this);
         }
 

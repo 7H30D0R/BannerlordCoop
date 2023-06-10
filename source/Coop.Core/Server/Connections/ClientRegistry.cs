@@ -2,6 +2,7 @@
 using Common.Network;
 using Coop.Core.Server.Connections.Messages;
 using Coop.Core.Server.Connections.States;
+using Coop.Core.Server.Services.EntityScope;
 using GameInterface.Services.Heroes.Messages;
 using LiteNetLib;
 using System;
@@ -24,11 +25,13 @@ namespace Coop.Core.Server.Connections
 
         private readonly IMessageBroker _messageBroker;
         private readonly INetwork _network;
+        private readonly IScopeRegistry _scopeRegistry;
 
-        public ClientRegistry(IMessageBroker messageBroker, INetwork network)
+        public ClientRegistry(IMessageBroker messageBroker, INetwork network, IScopeRegistry scopeRegistry)
         {
             _messageBroker = messageBroker;
             _network = network;
+            _scopeRegistry = scopeRegistry;
             _messageBroker.Subscribe<PlayerConnected>(PlayerJoiningHandler);
             _messageBroker.Subscribe<PlayerDisconnected>(PlayerDisconnectedHandler);
             _messageBroker.Subscribe<PlayerCampaignEntered>(PlayerCampaignEnteredHandler);
@@ -44,7 +47,7 @@ namespace Coop.Core.Server.Connections
         internal void PlayerJoiningHandler(MessagePayload<PlayerConnected> obj)
         {
             var playerId = obj.What.PlayerId;
-            var connectionLogic = new ConnectionLogic(playerId, _messageBroker, _network);
+            var connectionLogic = new ConnectionLogic(playerId, _messageBroker, _network, _scopeRegistry);
             ConnectionStates.Add(playerId, connectionLogic);
         }
 
